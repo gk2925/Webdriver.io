@@ -256,7 +256,7 @@ exports.config = {
         chai.use(chaiAsPromised)
         global.assert = chai.assert
         global.should = chai.should 
-        glocal.expect = chai.expect 
+        global.expect = chai.expect 
     },
     /**
      *
