@@ -1,0 +1,14 @@
+{
+     "cucumberautocomplete.steps": [
+        "step-definitions/*.js"
+    ],
+    
+    "cucumberautocomplete.strictGherkinCompletion": true,
+
+
+    "cucumber-quick": {
+        "tool": "webdriverio",
+        "script": "npx wdio run wdio.conf.js"
+    }
+
+}
