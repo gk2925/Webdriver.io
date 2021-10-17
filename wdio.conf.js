@@ -1,3 +1,7 @@
+const jsonTmpDirectory = "reports/json/";
+
+
+
 exports.config = {
     //
     // ====================
@@ -132,7 +136,12 @@ exports.config = {
     // Test reporter for stdout.
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter
-    reporters: ['spec'],
+    reporters: [
+        ["cucumberjs-json", {
+            jsonFolder: jsonTmpDirectory,
+            language: "en",
+        },],
+    ],
 
 
     //
@@ -181,6 +190,15 @@ exports.config = {
      */
     // onPrepare: function (config, capabilities) {
     // },
+    onPrepare: () => {
+        // Remove the json folder that holds the json report files
+        removeSync(jsonTmpDirectory,);
+        if (!fs.existsSync(jsonTmpDirectory,)){
+            fs.mkdirSync(jsonTmpDirectory,);
+        }
+
+    },
+
     /**
      * Gets executed before a worker process is spawned and can be used to initialise specific service
      * for that worker as well as modify runtime environments in an async fashion.
@@ -298,6 +316,39 @@ exports.config = {
      */
     // after: function (result, capabilities, specs) {
     // },
+    onComplete: () => {
+        //consolidate json and create report
+        try{
+            let consolidatedJsonArray = wdioParallel.getConsolidatedData({
+                parallelExecutionReportDirectory: jsonTmpDirectory,
+            },);
+
+            let jsonFile = `${jsonTmpDirectory}report.json`;
+            fs.writeFileSync(jsonFile, JSON.stringify(consolidatedJsonArray,),);
+    
+            var options = {
+                theme: "bootstrap",
+                jsonFile: jsonFile,
+                output: `reports/html/report-${currentTime}.html`,
+                reportSuiteAsScenarios: true,
+                scenarioTimestamp: true,
+                launchReport: true,
+                ignoreBadJsonFile: true,
+                storeScreenshots:false,
+            };
+    
+            reporter.generate(options,);
+
+        } catch(err){
+            console.log("err", err,);
+        }
+
+        //Remove temp feature file
+        removeSync(tmpSpecDirectory,);
+
+
+    }
+
     /**
      * Gets executed right after terminating the webdriver session.
      * @param {Object} config wdio configuration object
