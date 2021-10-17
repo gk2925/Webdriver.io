@@ -316,39 +316,7 @@ exports.config = {
      */
     // after: function (result, capabilities, specs) {
     // },
-    onComplete: () => {
-        //consolidate json and create report
-        try{
-            let consolidatedJsonArray = wdioParallel.getConsolidatedData({
-                parallelExecutionReportDirectory: jsonTmpDirectory,
-            },);
-
-            let jsonFile = `${jsonTmpDirectory}report.json`;
-            fs.writeFileSync(jsonFile, JSON.stringify(consolidatedJsonArray,),);
     
-            var options = {
-                theme: "bootstrap",
-                jsonFile: jsonFile,
-                output: `reports/html/report-${currentTime}.html`,
-                reportSuiteAsScenarios: true,
-                scenarioTimestamp: true,
-                launchReport: true,
-                ignoreBadJsonFile: true,
-                storeScreenshots:false,
-            };
-    
-            reporter.generate(options,);
-
-        } catch(err){
-            console.log("err", err,);
-        }
-
-        //Remove temp feature file
-        removeSync(tmpSpecDirectory,);
-
-
-    }
-
     /**
      * Gets executed right after terminating the webdriver session.
      * @param {Object} config wdio configuration object
